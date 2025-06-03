@@ -37,6 +37,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b24ce36e-f5d9-4746-a140-8312dbf1d403"
+      }
+    },
+    "owner": "boseongkim"
   }
 }

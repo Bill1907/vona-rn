@@ -1,29 +1,47 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { ThemeContextProvider } from "@/contexts/ThemeContext";
+import { AuthService } from "@/features/auth/services";
+import { useUserStore } from "@/stores/userStore";
+import { Slot, useRouter } from "expo-router";
+import React, { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+// Import global CSS for Tailwind
+import "@/styles/global.css";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const { setUser } = useUserStore();
+  const router = useRouter();
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  useEffect(() => {
+    // Check if user is already authenticated
+    const checkAuthStatus = async () => {
+      try {
+        const { user } = await AuthService.getCurrentUser();
+        setUser(user);
+
+        // Navigate based on auth status
+        if (user) {
+          router.replace("/(main)/" as any);
+        } else {
+          router.replace("/(auth)/login" as any);
+        }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        // Fallback to login on any error
+        router.replace("/(auth)/login" as any);
+      }
+    };
+
+    // Add a small delay to ensure router is ready
+    const timer = setTimeout(checkAuthStatus, 100);
+    return () => clearTimeout(timer);
+  }, [setUser, router]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeContextProvider>
+        <Slot />
+      </ThemeContextProvider>
+    </GestureHandlerRootView>
   );
 }
