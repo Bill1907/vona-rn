@@ -1,9 +1,11 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import React from "react";
 import { Text, View } from "react-native";
 
 export default function Search() {
   const { colorScheme } = useTheme();
+  const { t } = useTranslation();
 
   // Theme styles
   const styles = {
@@ -28,8 +30,8 @@ export default function Search() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Search</Text>
-      <Text style={styles.subtitle}>웹 검색 기능이 여기에 구현됩니다</Text>
+      <Text style={styles.title}>{t("pages.search.title")}</Text>
+      <Text style={styles.subtitle}>{t("pages.search.subtitle")}</Text>
     </View>
   );
 }

@@ -1,0 +1,87 @@
+{
+  "navigation": {
+    "home": "홈",
+    "conversations": "대화 기록",
+    "searchHistory": "검색 기록",
+    "schedule": "일정",
+    "profile": "프로필"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "register": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "account": "계정"
+  },
+  "common": {
+    "search": "검색",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "loading": "로딩 중...",
+    "error": "오류",
+    "success": "성공",
+    "user": "사용자",
+    "settings": "설정",
+    "language": "언어",
+    "theme": "테마"
+  },
+  "messages": {
+    "welcome": "환영합니다!",
+    "noData": "데이터가 없습니다",
+    "networkError": "네트워크 오류가 발생했습니다",
+    "loginSuccess": "로그인되었습니다",
+    "logoutSuccess": "로그아웃되었습니다"
+  },
+  "errors": {
+    "invalidEmail": "유효하지 않은 이메일입니다",
+    "invalidPassword": "비밀번호가 올바르지 않습니다",
+    "requiredField": "필수 입력 항목입니다"
+  },
+  "pages": {
+    "login": {
+      "appName": "Vona",
+      "tagline": "당신의 개인 비서",
+      "fillAllFields": "이메일과 비밀번호를 입력해주세요",
+      "loginFailed": "로그인 실패",
+      "passwordPlaceholder": "비밀번호를 입력하세요",
+      "notice": "알림",
+      "registerNotice": "회원가입 화면으로 이동합니다"
+    },
+    "home": {
+      "title": "Vona에 오신 것을 환영합니다!",
+      "greeting": "안녕하세요",
+      "loginStatus": "성공적으로 로그인되었습니다",
+      "instruction": "왼쪽 상단의 햄버거 메뉴를 탭하거나\n화면을 오른쪽으로 스와이프해서 메뉴를 열어보세요"
+    },
+    "conversations": {
+      "title": "대화 기록",
+      "subtitle": "AI와의 대화 기록이 여기에 표시됩니다.\n아직 대화 기록이 없습니다."
+    },
+    "searchHistory": {
+      "title": "검색 기록",
+      "subtitle": "웹 검색 기록이 여기에 표시됩니다.\n아직 검색 기록이 없습니다."
+    },
+    "schedule": {
+      "title": "일정",
+      "subtitle": "일정 관리 기능이 여기에 구현됩니다"
+    },
+    "search": {
+      "title": "검색",
+      "subtitle": "웹 검색 기능이 여기에 구현됩니다"
+    },
+    "profile": {
+      "accountSettings": "계정 설정",
+      "appSettings": "앱 설정",
+      "editProfile": "개인정보 수정",
+      "changePassword": "비밀번호 변경",
+      "preferences": "환경 설정",
+      "help": "도움말",
+      "logoutConfirm": "정말로 로그아웃하시겠습니까?"
+    }
+  }
+}
