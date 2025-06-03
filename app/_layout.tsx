@@ -1,8 +1,11 @@
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
+import initI18n from "@/lib/i18n";
 import { useUserStore } from "@/stores/userStore";
 import { Slot, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Import global CSS for Tailwind
@@ -11,8 +14,26 @@ import "@/styles/global.css";
 export default function RootLayout() {
   const { setUser } = useUserStore();
   const router = useRouter();
+  const [isI18nInitialized, setIsI18nInitialized] = useState(false);
 
   useEffect(() => {
+    // Initialize i18n first
+    const initializeI18n = async () => {
+      try {
+        await initI18n();
+        setIsI18nInitialized(true);
+      } catch (error) {
+        console.error("i18n initialization error:", error);
+        setIsI18nInitialized(true); // Continue even if i18n fails
+      }
+    };
+
+    initializeI18n();
+  }, []);
+
+  useEffect(() => {
+    if (!isI18nInitialized) return;
+
     // Check if user is already authenticated
     const checkAuthStatus = async () => {
       try {
@@ -35,12 +56,23 @@ export default function RootLayout() {
     // Add a small delay to ensure router is ready
     const timer = setTimeout(checkAuthStatus, 100);
     return () => clearTimeout(timer);
-  }, [setUser, router]);
+  }, [setUser, router, isI18nInitialized]);
+
+  // Show loading while i18n is initializing
+  if (!isI18nInitialized) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeContextProvider>
-        <Slot />
+        <LanguageProvider>
+          <Slot />
+        </LanguageProvider>
       </ThemeContextProvider>
     </GestureHandlerRootView>
   );

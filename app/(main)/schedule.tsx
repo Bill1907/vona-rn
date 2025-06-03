@@ -1,9 +1,11 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import React from "react";
 import { Text, View } from "react-native";
 
 export default function Schedule() {
   const { colorScheme } = useTheme();
+  const { t } = useTranslation();
 
   // Theme styles
   const styles = {
@@ -26,8 +28,8 @@ export default function Schedule() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Schedule</Text>
-      <Text style={styles.subtitle}>일정 관리 기능이 여기에 구현됩니다</Text>
+      <Text style={styles.title}>{t("pages.schedule.title")}</Text>
+      <Text style={styles.subtitle}>{t("pages.schedule.subtitle")}</Text>
     </View>
   );
 }

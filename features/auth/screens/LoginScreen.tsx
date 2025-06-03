@@ -1,7 +1,7 @@
 import { Button, Input } from "@/components/common";
-import { strings } from "@/constants/strings";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -14,10 +14,11 @@ export const LoginScreen: React.FC = () => {
   const { setUser } = useUserStore();
   const router = useRouter();
   const { colorScheme } = useTheme();
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("오류", "이메일과 비밀번호를 입력해주세요.");
+      Alert.alert(t("common.error"), t("pages.login.fillAllFields"));
       return;
     }
 
@@ -26,13 +27,13 @@ export const LoginScreen: React.FC = () => {
       const { user, error } = await AuthService.signIn(email, password);
 
       if (error) {
-        Alert.alert("로그인 실패", error);
+        Alert.alert(t("pages.login.loginFailed"), error);
       } else if (user) {
         setUser(user);
         router.replace("/(main)/" as any);
       }
     } catch (error) {
-      Alert.alert("오류", "네트워크 오류가 발생했습니다.");
+      Alert.alert(t("common.error"), t("messages.networkError"));
     } finally {
       setLoading(false);
     }
@@ -77,13 +78,13 @@ export const LoginScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>{strings.app.name}</Text>
+        <Text style={styles.title}>{t("pages.login.appName")}</Text>
 
-        <Text style={styles.tagline}>{strings.app.tagline}</Text>
+        <Text style={styles.tagline}>{t("pages.login.tagline")}</Text>
 
         <View style={styles.inputContainer}>
           <Input
-            label={strings.auth.email}
+            label={t("auth.email")}
             placeholder="example@email.com"
             value={email}
             onChangeText={setEmail}
@@ -92,8 +93,8 @@ export const LoginScreen: React.FC = () => {
 
         <View style={styles.inputContainerLast}>
           <Input
-            label={strings.auth.password}
-            placeholder="비밀번호를 입력하세요"
+            label={t("auth.password")}
+            placeholder={t("pages.login.passwordPlaceholder")}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -102,17 +103,19 @@ export const LoginScreen: React.FC = () => {
 
         <View style={styles.buttonContainer}>
           <Button
-            title={strings.auth.login}
+            title={t("auth.login")}
             onPress={handleLogin}
             loading={loading}
           />
         </View>
 
         <Button
-          title={strings.auth.register}
+          title={t("auth.register")}
           onPress={() => {
-            // Navigate to register screen
-            Alert.alert("알림", "회원가입 화면으로 이동합니다.");
+            Alert.alert(
+              t("pages.login.notice"),
+              t("pages.login.registerNotice")
+            );
           }}
           variant="outline"
         />

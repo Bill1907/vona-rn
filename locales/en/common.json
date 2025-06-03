@@ -1,0 +1,87 @@
+{
+  "navigation": {
+    "home": "Home",
+    "conversations": "Conversations",
+    "searchHistory": "Search History",
+    "schedule": "Schedule",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "account": "Account"
+  },
+  "common": {
+    "search": "Search",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "user": "User",
+    "settings": "Settings",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "messages": {
+    "welcome": "Welcome!",
+    "noData": "No data available",
+    "networkError": "Network error occurred",
+    "loginSuccess": "Logged in successfully",
+    "logoutSuccess": "Logged out successfully"
+  },
+  "errors": {
+    "invalidEmail": "Invalid email address",
+    "invalidPassword": "Invalid password",
+    "requiredField": "This field is required"
+  },
+  "pages": {
+    "login": {
+      "appName": "Vona",
+      "tagline": "Your personal assistant",
+      "fillAllFields": "Please enter your email and password",
+      "loginFailed": "Login Failed",
+      "passwordPlaceholder": "Enter your password",
+      "notice": "Notice",
+      "registerNotice": "Redirecting to registration screen"
+    },
+    "home": {
+      "title": "Welcome to Vona!",
+      "greeting": "Hello",
+      "loginStatus": "You are successfully logged in",
+      "instruction": "Tap the hamburger menu in the top left\nor swipe right on the screen to open the menu"
+    },
+    "conversations": {
+      "title": "Conversations",
+      "subtitle": "Your AI conversation history will be displayed here.\nNo conversation history yet."
+    },
+    "searchHistory": {
+      "title": "Search History",
+      "subtitle": "Your web search history will be displayed here.\nNo search history yet."
+    },
+    "schedule": {
+      "title": "Schedule",
+      "subtitle": "Schedule management features will be implemented here"
+    },
+    "search": {
+      "title": "Search",
+      "subtitle": "Web search features will be implemented here"
+    },
+    "profile": {
+      "accountSettings": "Account Settings",
+      "appSettings": "App Settings",
+      "editProfile": "Edit Profile",
+      "changePassword": "Change Password",
+      "preferences": "Preferences",
+      "help": "Help",
+      "logoutConfirm": "Are you sure you want to logout?"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useUserStore } from "@/stores/userStore";
 import React from "react";
 import { Text, View } from "react-native";
@@ -6,6 +7,7 @@ import { Text, View } from "react-native";
 export default function Main() {
   const { user } = useUserStore();
   const { colorScheme } = useTheme();
+  const { t } = useTranslation();
 
   // Theme styles
   const styles = {
@@ -44,13 +46,12 @@ export default function Main() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Vona!</Text>
-      <Text style={styles.text}>Hello, {user?.email || "User"}!</Text>
-      <Text style={styles.subtext}>You are successfully logged in</Text>
-      <Text style={styles.instructionText}>
-        왼쪽 상단의 햄버거 메뉴를 탭하거나{"\n"}
-        화면을 오른쪽으로 스와이프해서 메뉴를 열어보세요
+      <Text style={styles.title}>{t("pages.home.title")}</Text>
+      <Text style={styles.text}>
+        {t("pages.home.greeting")}, {user?.email || t("common.user")}!
       </Text>
+      <Text style={styles.subtext}>{t("pages.home.loginStatus")}</Text>
+      <Text style={styles.instructionText}>{t("pages.home.instruction")}</Text>
     </View>
   );
 }

@@ -1,12 +1,15 @@
 import { HamburgerMenu } from "@/components/common/HamburgerMenu";
 import { ThemeWrapper } from "@/components/common/ThemeWrapper";
+import { CustomDrawerContent } from "@/components/navigation/CustomDrawerContent";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "expo-router/drawer";
 import React from "react";
 
 export default function MainLayout() {
   const { colorScheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <ThemeWrapper>
@@ -39,24 +42,36 @@ export default function MainLayout() {
           swipeEnabled: true,
           swipeEdgeWidth: 50,
         })}
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
         <Drawer.Screen
           name="index"
           options={{
-            title: "Home",
+            title: t("navigation.home"),
             headerTitle: "Vona",
-            drawerLabel: "홈",
+            drawerLabel: t("navigation.home"),
             drawerIcon: ({ color, size }) => (
               <Ionicons name="home" size={size} color={color} />
             ),
           }}
         />
         <Drawer.Screen
-          name="search"
+          name="conversations"
           options={{
-            title: "Search",
-            headerTitle: "검색",
-            drawerLabel: "검색",
+            title: t("navigation.conversations"),
+            headerTitle: t("navigation.conversations"),
+            drawerLabel: t("navigation.conversations"),
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="chatbox" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="search-history"
+          options={{
+            title: t("navigation.searchHistory"),
+            headerTitle: t("navigation.searchHistory"),
+            drawerLabel: t("navigation.searchHistory"),
             drawerIcon: ({ color, size }) => (
               <Ionicons name="search" size={size} color={color} />
             ),
@@ -65,23 +80,41 @@ export default function MainLayout() {
         <Drawer.Screen
           name="schedule"
           options={{
-            title: "Schedule",
-            headerTitle: "일정",
-            drawerLabel: "일정",
+            title: t("navigation.schedule"),
+            headerTitle: t("navigation.schedule"),
+            drawerLabel: t("navigation.schedule"),
             drawerIcon: ({ color, size }) => (
               <Ionicons name="calendar" size={size} color={color} />
             ),
           }}
         />
         <Drawer.Screen
+          name="profile"
+          options={{
+            title: t("navigation.profile"),
+            headerTitle: t("navigation.profile"),
+            drawerLabel: t("navigation.profile"),
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="person" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
           name="settings"
           options={{
-            title: "Settings",
-            headerTitle: "설정",
-            drawerLabel: "설정",
+            title: t("common.settings"),
+            headerTitle: t("common.settings"),
+            drawerLabel: t("common.settings"),
             drawerIcon: ({ color, size }) => (
               <Ionicons name="settings" size={size} color={color} />
             ),
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+        <Drawer.Screen
+          name="search"
+          options={{
+            drawerItemStyle: { display: "none" },
           }}
         />
       </Drawer>
