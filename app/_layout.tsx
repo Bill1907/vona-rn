@@ -1,9 +1,11 @@
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
+import { useFonts } from "@/hooks/useFonts";
 import initI18n from "@/lib/i18n";
 import { useUserStore } from "@/stores/userStore";
 import { Slot, useRouter } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -11,10 +13,14 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 // Import global CSS for Tailwind
 import "@/styles/global.css";
 
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   const { setUser } = useUserStore();
   const router = useRouter();
   const [isI18nInitialized, setIsI18nInitialized] = useState(false);
+  const fontsLoaded = useFonts();
 
   useEffect(() => {
     // Initialize i18n first
@@ -32,7 +38,10 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (!isI18nInitialized) return;
+    if (!isI18nInitialized || !fontsLoaded) return;
+
+    // Hide splash screen when everything is ready
+    SplashScreen.hideAsync();
 
     // Check if user is already authenticated
     const checkAuthStatus = async () => {
@@ -56,10 +65,10 @@ export default function RootLayout() {
     // Add a small delay to ensure router is ready
     const timer = setTimeout(checkAuthStatus, 100);
     return () => clearTimeout(timer);
-  }, [setUser, router, isI18nInitialized]);
+  }, [setUser, router, isI18nInitialized, fontsLoaded]);
 
-  // Show loading while i18n is initializing
-  if (!isI18nInitialized) {
+  // Show loading while i18n or fonts are initializing
+  if (!isI18nInitialized || !fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Loading...</Text>

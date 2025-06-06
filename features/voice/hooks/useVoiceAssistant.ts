@@ -1,13 +1,22 @@
+import { Audio } from "expo-av";
 import { useCallback, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { VoiceService, VoiceSessionConfig } from "../services";
 import { useWebrtc } from "./useWebrtc";
 
 // React Native WebRTC를 위한 폴리필
+let InCallManager: any;
 if (Platform.OS !== "web") {
   // React Native 환경에서는 WebRTC 폴리필을 사용
   require("react-native-webrtc");
   const { mediaDevices } = require("react-native-webrtc");
+
+  // InCallManager 가져오기 (오디오 라우팅 제어용)
+  try {
+    InCallManager = require("react-native-webrtc").InCallManager;
+  } catch (error) {
+    console.warn("InCallManager not available:", error);
+  }
 
   // Global navigator에 mediaDevices 추가
   if (typeof global !== "undefined") {
@@ -23,6 +32,7 @@ if (Platform.OS !== "web") {
 
 export interface VoiceAssistantState {
   isConnected: boolean;
+  isConnecting: boolean;
   isListening: boolean;
   isSpeaking: boolean;
   sessionId: string | null;
@@ -40,6 +50,7 @@ export interface VoiceMessage {
 export const useVoiceAssistant = () => {
   const [state, setState] = useState<VoiceAssistantState>({
     isConnected: false,
+    isConnecting: false,
     isListening: false,
     isSpeaking: false,
     sessionId: null,
@@ -73,12 +84,71 @@ export const useVoiceAssistant = () => {
   });
 
   /**
+   * 오디오 모드를 스피커폰으로 설정
+   */
+  const setupSpeakerphone = useCallback(async () => {
+    if (Platform.OS !== "web") {
+      try {
+        // Expo Audio 세션 설정 (스피커폰 모드)
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          staysActiveInBackground: false,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: false,
+          playThroughEarpieceAndroid: false, // 스피커로 재생
+        });
+
+        // InCallManager로 스피커폰 강제 설정
+        if (InCallManager) {
+          InCallManager.setSpeakerphoneOn(true);
+          InCallManager.setForceSpeakerphoneOn(true);
+        }
+
+        console.log("Speakerphone mode activated");
+      } catch (error) {
+        console.error("Failed to set speakerphone mode:", error);
+      }
+    }
+  }, []);
+
+  /**
+   * 오디오 모드 복원
+   */
+  const restoreAudioMode = useCallback(async () => {
+    if (Platform.OS !== "web") {
+      try {
+        // Expo Audio 세션 복원
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: false,
+          playsInSilentModeIOS: false,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: true, // 기본값으로 복원
+        });
+
+        // InCallManager 스피커폰 해제
+        if (InCallManager) {
+          InCallManager.setSpeakerphoneOn(false);
+          InCallManager.setForceSpeakerphoneOn(false);
+        }
+
+        console.log("Audio mode restored");
+      } catch (error) {
+        console.error("Failed to restore audio mode:", error);
+      }
+    }
+  }, []);
+
+  /**
    * Voice Assistant 세션을 시작합니다
    */
   const startVoiceSession = useCallback(
     async (config?: Partial<VoiceSessionConfig>) => {
       try {
-        setState((prev) => ({ ...prev, error: null }));
+        setState((prev) => ({ ...prev, error: null, isConnecting: true }));
+
+        // 스피커폰 모드 설정
+        await setupSpeakerphone();
 
         // 1. Supabase 함수를 통해 ephemeral token 받아오기
         const { token, error: tokenError } =
@@ -176,11 +246,13 @@ export const useVoiceAssistant = () => {
         setState((prev) => ({
           ...prev,
           sessionId: token.session_id,
+          isConnecting: false,
         }));
       } catch (error) {
         console.error("Failed to start voice session:", error);
         setState((prev) => ({
           ...prev,
+          isConnecting: false,
           error:
             error instanceof Error
               ? error.message
@@ -196,6 +268,9 @@ export const useVoiceAssistant = () => {
    */
   const endVoiceSession = useCallback(async () => {
     try {
+      // 오디오 모드 복원
+      restoreAudioMode();
+
       // 데이터 채널 정리
       if (dataChannelRef.current) {
         dataChannelRef.current.close();
@@ -207,6 +282,7 @@ export const useVoiceAssistant = () => {
 
       setState({
         isConnected: false,
+        isConnecting: false,
         isListening: false,
         isSpeaking: false,
         sessionId: null,
@@ -219,7 +295,7 @@ export const useVoiceAssistant = () => {
         error: "Failed to end voice session",
       }));
     }
-  }, [webrtc]);
+  }, [webrtc, restoreAudioMode]);
 
   /**
    * 음성 듣기 시작/중지
@@ -380,17 +456,31 @@ export const useVoiceAssistant = () => {
   const playRemoteAudio = (stream: MediaStream) => {
     if (Platform.OS === "web") {
       if (!audioElementRef.current) {
-        audioElementRef.current = new Audio();
+        audioElementRef.current = new HTMLAudioElement();
       }
 
-      audioElementRef.current.srcObject = stream;
-      audioElementRef.current.play().catch(console.error);
+      if (audioElementRef.current) {
+        audioElementRef.current.srcObject = stream;
+        audioElementRef.current.play().catch(console.error);
 
+        setState((prev) => ({ ...prev, isSpeaking: true }));
+
+        audioElementRef.current.onended = () => {
+          setState((prev) => ({ ...prev, isSpeaking: false }));
+        };
+      }
+    } else {
+      // React Native에서는 WebRTC가 자동으로 오디오를 처리
+      // 스피커폰 모드가 이미 설정되어 있으므로 스피커로 재생됨
       setState((prev) => ({ ...prev, isSpeaking: true }));
 
-      audioElementRef.current.onended = () => {
-        setState((prev) => ({ ...prev, isSpeaking: false }));
-      };
+      // 스트림이 종료되면 speaking 상태 해제
+      const tracks = stream.getAudioTracks();
+      if (tracks.length > 0) {
+        tracks[0].onended = () => {
+          setState((prev) => ({ ...prev, isSpeaking: false }));
+        };
+      }
     }
   };
 

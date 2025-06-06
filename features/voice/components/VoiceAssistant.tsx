@@ -1,12 +1,13 @@
+import { SmartText } from "@/components/common/SmartText";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -19,6 +20,7 @@ export const VoiceAssistant: React.FC = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [textInput, setTextInput] = useState("");
+  const flatListRef = useRef<FlatList>(null);
 
   const {
     state,
@@ -28,6 +30,16 @@ export const VoiceAssistant: React.FC = () => {
     toggleListening,
     sendTextMessage,
   } = useVoiceAssistant();
+
+  // 메시지가 추가될 때마다 하단으로 스크롤
+  useEffect(() => {
+    if (messages.length > 0) {
+      // 약간의 딜레이를 주어 렌더링이 완료된 후 스크롤
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
 
   const handleStartSession = async () => {
     try {
@@ -77,7 +89,8 @@ export const VoiceAssistant: React.FC = () => {
         },
       ]}
     >
-      <Text
+      <SmartText
+        weight="regular"
         style={[
           styles.messageText,
           {
@@ -91,8 +104,9 @@ export const VoiceAssistant: React.FC = () => {
         ]}
       >
         {item.content}
-      </Text>
-      <Text
+      </SmartText>
+      <SmartText
+        weight="light"
         style={[
           styles.timestamp,
           {
@@ -106,7 +120,7 @@ export const VoiceAssistant: React.FC = () => {
         ]}
       >
         {item.timestamp.toLocaleTimeString()}
-      </Text>
+      </SmartText>
     </View>
   );
 
@@ -220,16 +234,23 @@ export const VoiceAssistant: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t("voice.assistant")}</Text>
+        <SmartText weight="semiBold" style={styles.headerTitle}>
+          {t("voice.assistant")}
+        </SmartText>
         <TouchableOpacity
           style={[styles.controlButton, styles.sessionButton]}
           onPress={state.isConnected ? handleEndSession : handleStartSession}
+          disabled={state.isConnecting}
         >
-          <Ionicons
-            name={state.isConnected ? "stop" : "play"}
-            size={24}
-            color="#ffffff"
-          />
+          {state.isConnecting ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <Ionicons
+              name={state.isConnected ? "stop" : "play"}
+              size={24}
+              color="#ffffff"
+            />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -256,7 +277,7 @@ export const VoiceAssistant: React.FC = () => {
                 : "#9ca3af"
           }
         />
-        <Text style={styles.statusText}>
+        <SmartText weight="medium" style={styles.statusText}>
           {state.isConnected
             ? state.isSpeaking
               ? t("voice.speaking")
@@ -264,23 +285,28 @@ export const VoiceAssistant: React.FC = () => {
                 ? t("voice.listening")
                 : t("voice.connected")
             : t("voice.disconnected")}
-        </Text>
+        </SmartText>
       </View>
 
       {/* Error Display */}
       {state.error && (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{state.error}</Text>
+          <SmartText style={styles.errorText}>{state.error}</SmartText>
         </View>
       )}
 
       {/* Messages */}
       <FlatList
+        ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
         keyExtractor={(item) => item.id}
         style={styles.messagesContainer}
         showsVerticalScrollIndicator={false}
+        onContentSizeChange={() => {
+          // 컨텐츠 크기가 변경될 때도 하단으로 스크롤
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }}
       />
 
       {/* Input Controls */}

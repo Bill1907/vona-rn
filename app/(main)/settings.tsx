@@ -1,3 +1,4 @@
+import { SmartText } from "@/components/common/SmartText";
 import { ThemeToggleSimple } from "@/components/common/ThemeToggleSimple";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -6,7 +7,8 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useUserStore } from "@/stores/userStore";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Settings() {
   const { setUser } = useUserStore();
@@ -14,11 +16,16 @@ export default function Settings() {
   const { colorScheme } = useTheme();
   const { language, changeLanguage } = useLanguage();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   const handleLogout = async () => {
-    await AuthService.signOut();
-    setUser(null);
-    router.replace("/(auth)/login" as any);
+    try {
+      await AuthService.signOut();
+      setUser(null);
+      router.replace("/(auth)/login" as any);
+    } catch (error) {
+      Alert.alert(t("settings.logoutError"));
+    }
   };
 
   const handleLanguageChange = async (newLanguage: "ko" | "en") => {
@@ -34,7 +41,6 @@ export default function Settings() {
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight: "600" as const,
       color: colorScheme === "dark" ? "#d1d5db" : "#374151",
       marginBottom: 16,
     },
@@ -62,7 +68,6 @@ export default function Settings() {
     },
     languageButtonText: {
       textAlign: "center" as const,
-      fontWeight: "500" as const,
       fontSize: 14,
     },
     languageButtonTextActive: {
@@ -80,27 +85,29 @@ export default function Settings() {
     logoutButtonText: {
       color: "#ffffff",
       textAlign: "center" as const,
-      fontWeight: "600" as const,
       fontSize: 16,
     },
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 24 }]}>
       {/* Language Settings Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t("common.language")}</Text>
+        <SmartText weight="semiBold" style={styles.sectionTitle}>
+          {t("settings.language")}
+        </SmartText>
         <View style={styles.languageContainer}>
           <TouchableOpacity
-            onPress={() => handleLanguageChange("ko")}
             style={[
               styles.languageButton,
               language === "ko"
                 ? styles.languageButtonActive
                 : styles.languageButtonInactive,
             ]}
+            onPress={() => changeLanguage("ko")}
           >
-            <Text
+            <SmartText
+              weight="medium"
               style={[
                 styles.languageButtonText,
                 language === "ko"
@@ -109,18 +116,19 @@ export default function Settings() {
               ]}
             >
               한국어
-            </Text>
+            </SmartText>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => handleLanguageChange("en")}
             style={[
               styles.languageButton,
               language === "en"
                 ? styles.languageButtonActive
                 : styles.languageButtonInactive,
             ]}
+            onPress={() => changeLanguage("en")}
           >
-            <Text
+            <SmartText
+              weight="medium"
               style={[
                 styles.languageButtonText,
                 language === "en"
@@ -129,22 +137,25 @@ export default function Settings() {
               ]}
             >
               English
-            </Text>
+            </SmartText>
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Theme Settings Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t("common.theme")}</Text>
+        <SmartText weight="semiBold" style={styles.sectionTitle}>
+          {t("common.theme")}
+        </SmartText>
         <ThemeToggleSimple />
       </View>
 
       {/* Logout Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t("auth.account")}</Text>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Text style={styles.logoutButtonText}>{t("auth.logout")}</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <SmartText weight="semiBold" style={styles.logoutButtonText}>
+            {t("settings.logout")}
+          </SmartText>
         </TouchableOpacity>
       </View>
     </View>
