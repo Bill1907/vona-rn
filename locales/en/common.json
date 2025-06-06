@@ -30,6 +30,19 @@
     "language": "Language",
     "theme": "Theme"
   },
+  "voice": {
+    "assistant": "Voice Assistant",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "listening": "Listening...",
+    "speaking": "Speaking...",
+    "typeMessage": "Type a message",
+    "error": "Error",
+    "sessionStartFailed": "Failed to start voice session",
+    "sessionEndFailed": "Failed to end voice session",
+    "microphonePermission": "Microphone permission required",
+    "networkError": "Network error occurred"
+  },
   "messages": {
     "welcome": "Welcome!",
     "noData": "No data available",

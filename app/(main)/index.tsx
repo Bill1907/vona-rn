@@ -1,8 +1,9 @@
+import { SmartText } from "@/components/common/SmartText";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useUserStore } from "@/stores/userStore";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 export default function Main() {
   const { user } = useUserStore();
@@ -20,7 +21,6 @@ export default function Main() {
     },
     title: {
       fontSize: 30,
-      fontWeight: "bold" as const,
       color: colorScheme === "dark" ? "#10b981" : "#059669",
     },
     text: {
@@ -46,12 +46,18 @@ export default function Main() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t("pages.home.title")}</Text>
-      <Text style={styles.text}>
+      <SmartText weight="bold" style={styles.title}>
+        {t("pages.home.title")}
+      </SmartText>
+      <SmartText weight="medium" style={styles.text}>
         {t("pages.home.greeting")}, {user?.email || t("common.user")}!
-      </Text>
-      <Text style={styles.subtext}>{t("pages.home.loginStatus")}</Text>
-      <Text style={styles.instructionText}>{t("pages.home.instruction")}</Text>
+      </SmartText>
+      <SmartText weight="regular" style={styles.subtext}>
+        {t("pages.home.loginStatus")}
+      </SmartText>
+      <SmartText weight="regular" style={styles.instructionText}>
+        {t("pages.home.instruction")}
+      </SmartText>
     </View>
   );
 }
