@@ -1,7 +1,8 @@
+import { ScreenBackground } from "@/components/common";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text } from "react-native";
 
 export default function SearchHistory() {
   const { colorScheme } = useTheme();
@@ -9,10 +10,6 @@ export default function SearchHistory() {
 
   // Theme styles
   const styles = {
-    container: {
-      flex: 1,
-      backgroundColor: colorScheme === "dark" ? "#111827" : "#ffffff",
-    },
     content: {
       flex: 1,
       justifyContent: "center" as const,
@@ -22,24 +19,24 @@ export default function SearchHistory() {
     title: {
       fontSize: 24,
       fontWeight: "bold" as const,
-      color: colorScheme === "dark" ? "#3b82f6" : "#2563eb",
+      color: "#ffffff",
       marginBottom: 16,
     },
     subtitle: {
       fontSize: 16,
-      color: colorScheme === "dark" ? "#d1d5db" : "#4b5563",
+      color: "#d1d5db",
       textAlign: "center" as const,
       lineHeight: 24,
     },
     emptyIcon: {
       fontSize: 48,
-      color: colorScheme === "dark" ? "#6b7280" : "#9ca3af",
+      color: "#9ca3af",
       marginBottom: 16,
     },
   };
 
   return (
-    <View style={styles.container}>
+    <ScreenBackground variant="animated" isActive={true}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -48,6 +45,6 @@ export default function SearchHistory() {
         <Text style={styles.title}>{t("pages.searchHistory.title")}</Text>
         <Text style={styles.subtitle}>{t("pages.searchHistory.subtitle")}</Text>
       </ScrollView>
-    </View>
+    </ScreenBackground>
   );
 }

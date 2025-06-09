@@ -1,3 +1,4 @@
+import { ScreenBackground } from "@/components/common";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -31,15 +32,58 @@ export default function Profile() {
     ]);
   };
 
-  // 사용자 이름을 이메일에서 추출
-  const userName = user?.email?.split("@")[0] || t("common.user");
+  const handleAccountSettings = () => {
+    router.push("/account-settings" as any);
+  };
+
+  const handleAppSettings = () => {
+    router.push("/app-settings" as any);
+  };
+
+  const menuItems = [
+    {
+      icon: "person-outline" as const,
+      title: t("pages.profile.accountSettings"),
+      subtitle: t("pages.profile.manageAccount"),
+      onPress: handleAccountSettings,
+    },
+    {
+      icon: "settings-outline" as const,
+      title: t("pages.profile.appSettings"),
+      subtitle:
+        t("pages.profile.themeSettings") +
+        " · " +
+        t("pages.profile.languageSettings"),
+      onPress: handleAppSettings,
+    },
+    {
+      icon: "notifications-outline" as const,
+      title: t("pages.profile.notifications"),
+      subtitle: t("pages.profile.manageNotifications"),
+      onPress: () => {
+        // TODO: 알림 설정 화면으로 이동
+      },
+    },
+    {
+      icon: "shield-checkmark-outline" as const,
+      title: t("pages.profile.privacy"),
+      subtitle: t("pages.profile.privacySettings"),
+      onPress: () => {
+        // TODO: 개인정보 설정 화면으로 이동
+      },
+    },
+    {
+      icon: "help-circle-outline" as const,
+      title: t("pages.profile.help"),
+      subtitle: t("pages.profile.help"),
+      onPress: () => {
+        // TODO: 도움말 화면으로 이동
+      },
+    },
+  ];
 
   // Theme styles
   const styles = {
-    container: {
-      flex: 1,
-      backgroundColor: colorScheme === "dark" ? "#111827" : "#ffffff",
-    },
     scrollContainer: {
       flex: 1,
     },
@@ -50,14 +94,14 @@ export default function Profile() {
       alignItems: "center" as const,
       paddingVertical: 32,
       borderBottomWidth: 1,
-      borderBottomColor: colorScheme === "dark" ? "#374151" : "#e5e7eb",
+      borderBottomColor: "rgba(156, 163, 175, 0.3)",
       marginBottom: 32,
     },
     profileImage: {
       width: 100,
       height: 100,
       borderRadius: 50,
-      backgroundColor: colorScheme === "dark" ? "#4b5563" : "#d1d5db",
+      backgroundColor: "rgba(75, 85, 99, 0.6)",
       justifyContent: "center" as const,
       alignItems: "center" as const,
       marginBottom: 16,
@@ -65,12 +109,12 @@ export default function Profile() {
     profileName: {
       fontSize: 24,
       fontWeight: "bold" as const,
-      color: colorScheme === "dark" ? "#ffffff" : "#1f2937",
+      color: "#ffffff",
       marginBottom: 8,
     },
     profileEmail: {
       fontSize: 16,
-      color: colorScheme === "dark" ? "#9ca3af" : "#6b7280",
+      color: "#d1d5db",
     },
     section: {
       marginBottom: 24,
@@ -78,7 +122,7 @@ export default function Profile() {
     sectionTitle: {
       fontSize: 18,
       fontWeight: "600" as const,
-      color: colorScheme === "dark" ? "#d1d5db" : "#374151",
+      color: "#f3f4f6",
       marginBottom: 16,
     },
     menuItem: {
@@ -86,15 +130,21 @@ export default function Profile() {
       alignItems: "center" as const,
       paddingVertical: 16,
       paddingHorizontal: 16,
-      backgroundColor: colorScheme === "dark" ? "#1f2937" : "#f9fafb",
+      backgroundColor: "rgba(31, 41, 55, 0.6)",
       borderRadius: 8,
       marginBottom: 8,
     },
     menuText: {
       fontSize: 16,
-      color: colorScheme === "dark" ? "#d1d5db" : "#374151",
+      color: "#e5e7eb",
       marginLeft: 12,
       flex: 1,
+    },
+    menuSubtext: {
+      fontSize: 14,
+      color: "#9ca3af",
+      marginTop: 2,
+      marginLeft: 12,
     },
     logoutButton: {
       flexDirection: "row" as const,
@@ -102,7 +152,7 @@ export default function Profile() {
       justifyContent: "center" as const,
       paddingVertical: 16,
       paddingHorizontal: 24,
-      backgroundColor: colorScheme === "dark" ? "#dc2626" : "#ef4444",
+      backgroundColor: "#dc2626",
       borderRadius: 8,
       marginTop: 32,
     },
@@ -115,108 +165,48 @@ export default function Profile() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScreenBackground variant="animated" isActive={true}>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.content}>
-          {/* 프로필 헤더 */}
+          {/* Profile Header */}
           <View style={styles.profileHeader}>
             <View style={styles.profileImage}>
-              <Ionicons
-                name="person"
-                size={50}
-                color={colorScheme === "dark" ? "#9ca3af" : "#6b7280"}
-              />
+              <Ionicons name="person" size={50} color="#d1d5db" />
             </View>
-            <Text style={styles.profileName}>{userName}</Text>
+            <Text style={styles.profileName}>
+              {user?.email?.split("@")[0] || t("common.user")}
+            </Text>
             <Text style={styles.profileEmail}>{user?.email}</Text>
           </View>
 
-          {/* 계정 설정 섹션 */}
+          {/* Menu Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              {t("pages.profile.accountSettings")}
+              {t("pages.profile.menuTitle")}
             </Text>
-
-            <TouchableOpacity style={styles.menuItem}>
-              <Ionicons
-                name="person-outline"
-                size={20}
-                color={colorScheme === "dark" ? "#9ca3af" : "#6b7280"}
-              />
-              <Text style={styles.menuText}>
-                {t("pages.profile.editProfile")}
-              </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.menuItem}>
-              <Ionicons
-                name="key-outline"
-                size={20}
-                color={colorScheme === "dark" ? "#9ca3af" : "#6b7280"}
-              />
-              <Text style={styles.menuText}>
-                {t("pages.profile.changePassword")}
-              </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
-              />
-            </TouchableOpacity>
+            {menuItems.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.menuItem}
+                onPress={item.onPress}
+              >
+                <Ionicons name={item.icon} size={24} color="#d1d5db" />
+                <View style={{ flex: 1, marginLeft: 12 }}>
+                  <Text style={styles.menuText}>{item.title}</Text>
+                  <Text style={styles.menuSubtext}>{item.subtitle}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+              </TouchableOpacity>
+            ))}
           </View>
 
-          {/* 앱 설정 섹션 */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              {t("pages.profile.appSettings")}
-            </Text>
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => router.push("/(main)/settings" as any)}
-            >
-              <Ionicons
-                name="settings-outline"
-                size={20}
-                color={colorScheme === "dark" ? "#9ca3af" : "#6b7280"}
-              />
-              <Text style={styles.menuText}>
-                {t("pages.profile.preferences")}
-              </Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.menuItem}>
-              <Ionicons
-                name="help-circle-outline"
-                size={20}
-                color={colorScheme === "dark" ? "#9ca3af" : "#6b7280"}
-              />
-              <Text style={styles.menuText}>{t("pages.profile.help")}</Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colorScheme === "dark" ? "#6b7280" : "#9ca3af"}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* 로그아웃 버튼 */}
+          {/* Logout Button */}
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons name="log-out" size={20} color="#ffffff" />
+            <Ionicons name="log-out-outline" size={20} color="#ffffff" />
             <Text style={styles.logoutButtonText}>{t("auth.logout")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </ScreenBackground>
   );
 }

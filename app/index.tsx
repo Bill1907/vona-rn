@@ -1,3 +1,4 @@
+import { ScreenBackground } from "@/components/common";
 import { useTheme } from "@/contexts/ThemeContext";
 import React from "react";
 import { Text, View } from "react-native";
@@ -7,21 +8,22 @@ export default function Index() {
 
   // Theme styles
   const styles = {
-    container: {
+    content: {
       flex: 1,
       justifyContent: "center" as const,
       alignItems: "center" as const,
-      backgroundColor: colorScheme === "dark" ? "#111827" : "#ffffff",
     },
     text: {
       fontSize: 20,
-      color: colorScheme === "dark" ? "#d1d5db" : "#4b5563",
+      color: "#ffffff",
     },
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Loading...</Text>
-    </View>
+    <ScreenBackground variant="animated" isActive={true}>
+      <View style={styles.content}>
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    </ScreenBackground>
   );
 }
