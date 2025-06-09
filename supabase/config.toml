@@ -277,25 +277,4 @@ s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
 
-# WebRTC Configuration for Voice Assistant
-[webrtc]
-# Enable WebRTC signaling through Supabase Realtime
-enabled = true
-# STUN servers for NAT traversal
-stun_servers = [
-  "stun:stun.l.google.com:19302",
-  "stun:stun1.l.google.com:19302",
-  "stun:stun2.l.google.com:19302"
-]
-# TURN servers for environments with restrictive firewalls (configure in production)
-# turn_servers = [
-#   {
-#     urls = "turn:turnserver.example.com:3478",
-#     username = "env(TURN_USERNAME)",
-#     credential = "env(TURN_PASSWORD)"
-#   }
-# ]
-# ICE connection timeout in milliseconds
-ice_connection_timeout = 30000
-# Offer/Answer timeout in milliseconds  
-offer_answer_timeout = 10000
+

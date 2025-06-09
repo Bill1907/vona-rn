@@ -88,17 +88,7 @@ export default function MainLayout() {
             ),
           }}
         />
-        <Drawer.Screen
-          name="voice-assistant"
-          options={{
-            title: t("voice.assistant"),
-            headerTitle: t("voice.assistant"),
-            drawerLabel: t("voice.assistant"),
-            drawerIcon: ({ color, size }) => (
-              <Ionicons name="mic" size={size} color={color} />
-            ),
-          }}
-        />
+
         <Drawer.Screen
           name="profile"
           options={{

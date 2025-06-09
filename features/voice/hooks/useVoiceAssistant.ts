@@ -1,7 +1,13 @@
 import { Audio } from "expo-av";
 import { useCallback, useRef, useState } from "react";
 import { Platform } from "react-native";
-import { VoiceService, VoiceSessionConfig } from "../services";
+import { VoiceService } from "../services";
+import type {
+  VoiceAssistantAPI,
+  VoiceAssistantState,
+  VoiceMessage,
+  VoiceSessionConfig,
+} from "../types";
 import { useWebrtc } from "./useWebrtc";
 
 // React Native WebRTC를 위한 폴리필
@@ -30,24 +36,7 @@ if (Platform.OS !== "web") {
   }
 }
 
-export interface VoiceAssistantState {
-  isConnected: boolean;
-  isConnecting: boolean;
-  isListening: boolean;
-  isSpeaking: boolean;
-  sessionId: string | null;
-  error: string | null;
-}
-
-export interface VoiceMessage {
-  id: string;
-  type: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-  audio_url?: string;
-}
-
-export const useVoiceAssistant = () => {
+export const useVoiceAssistant = (): VoiceAssistantAPI => {
   const [state, setState] = useState<VoiceAssistantState>({
     isConnected: false,
     isConnecting: false,
@@ -55,12 +44,15 @@ export const useVoiceAssistant = () => {
     isSpeaking: false,
     sessionId: null,
     error: null,
+    isMicMuted: false,
+    isSpeakerMuted: false,
   });
 
   const [messages, setMessages] = useState<VoiceMessage[]>([]);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const ephemeralTokenRef = useRef<string | null>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
 
   // WebRTC 훅 사용
   const webrtc = useWebrtc({
@@ -167,6 +159,9 @@ export const useVoiceAssistant = () => {
         if (!stream) {
           throw new Error("Failed to get microphone access");
         }
+
+        // 마이크 스트림 참조 저장 (뮤트 제어용)
+        micStreamRef.current = stream;
 
         // 3. WebRTC PeerConnection 초기화
         await webrtc.initializePeerConnection();
@@ -277,6 +272,12 @@ export const useVoiceAssistant = () => {
         dataChannelRef.current = null;
       }
 
+      // 마이크 스트림 정리
+      if (micStreamRef.current) {
+        micStreamRef.current.getTracks().forEach((track) => track.stop());
+        micStreamRef.current = null;
+      }
+
       // WebRTC 연결 정리
       webrtc.closeConnection();
 
@@ -287,6 +288,8 @@ export const useVoiceAssistant = () => {
         isSpeaking: false,
         sessionId: null,
         error: null,
+        isMicMuted: false,
+        isSpeakerMuted: false,
       });
     } catch (error) {
       console.error("Failed to end voice session:", error);
@@ -308,6 +311,72 @@ export const useVoiceAssistant = () => {
       isListening: !prev.isListening,
     }));
   }, [state.isConnected]);
+
+  /**
+   * 마이크 음소거/해제
+   */
+  const toggleMicMute = useCallback(() => {
+    if (!micStreamRef.current) return;
+
+    const audioTracks = micStreamRef.current.getAudioTracks();
+    audioTracks.forEach((track) => {
+      track.enabled = state.isMicMuted; // 현재 뮤트 상태의 반대로 설정
+    });
+
+    setState((prev) => ({
+      ...prev,
+      isMicMuted: !prev.isMicMuted,
+    }));
+  }, [state.isMicMuted]);
+
+  /**
+   * 스피커 음소거/해제
+   */
+  const toggleSpeakerMute = useCallback(() => {
+    if (Platform.OS === "web" && audioElementRef.current) {
+      audioElementRef.current.muted = !state.isSpeakerMuted;
+    } else if (Platform.OS !== "web" && InCallManager) {
+      // React Native에서는 InCallManager로 스피커 제어
+      if (state.isSpeakerMuted) {
+        InCallManager.setSpeakerphoneOn(true);
+      } else {
+        InCallManager.setSpeakerphoneOn(false);
+      }
+    }
+
+    setState((prev) => ({
+      ...prev,
+      isSpeakerMuted: !prev.isSpeakerMuted,
+    }));
+  }, [state.isSpeakerMuted]);
+
+  /**
+   * 전체 음소거/해제 (마이크 + 스피커)
+   */
+  const toggleMute = useCallback(() => {
+    const shouldMute = !state.isMicMuted || !state.isSpeakerMuted;
+
+    // 마이크 제어
+    if (micStreamRef.current) {
+      const audioTracks = micStreamRef.current.getAudioTracks();
+      audioTracks.forEach((track) => {
+        track.enabled = !shouldMute;
+      });
+    }
+
+    // 스피커 제어
+    if (Platform.OS === "web" && audioElementRef.current) {
+      audioElementRef.current.muted = shouldMute;
+    } else if (Platform.OS !== "web" && InCallManager) {
+      InCallManager.setSpeakerphoneOn(!shouldMute);
+    }
+
+    setState((prev) => ({
+      ...prev,
+      isMicMuted: shouldMute,
+      isSpeakerMuted: shouldMute,
+    }));
+  }, [state.isMicMuted, state.isSpeakerMuted]);
 
   /**
    * 텍스트 메시지 전송
@@ -490,6 +559,9 @@ export const useVoiceAssistant = () => {
     startVoiceSession,
     endVoiceSession,
     toggleListening,
+    toggleMicMute,
+    toggleSpeakerMute,
+    toggleMute,
     sendTextMessage,
   };
 };

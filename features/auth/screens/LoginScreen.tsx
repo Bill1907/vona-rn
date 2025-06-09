@@ -1,4 +1,4 @@
-import { Button, Input } from "@/components/common";
+import { Button, Input, ScreenBackground } from "@/components/common";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -18,22 +18,24 @@ export const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert(t("common.error"), t("pages.login.fillAllFields"));
+      Alert.alert(t("auth.error"), t("auth.fillAllFields"));
       return;
     }
 
     setLoading(true);
     try {
-      const { user, error } = await AuthService.signIn(email, password);
-
-      if (error) {
-        Alert.alert(t("pages.login.loginFailed"), error);
-      } else if (user) {
-        setUser(user);
+      const result = await AuthService.signIn(email, password);
+      if (result.user) {
+        setUser(result.user);
         router.replace("/(main)/" as any);
+      } else {
+        Alert.alert(
+          t("auth.error"),
+          result.error || t("auth.invalidCredentials")
+        );
       }
     } catch (error) {
-      Alert.alert(t("common.error"), t("messages.networkError"));
+      Alert.alert(t("auth.error"), t("auth.loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -41,28 +43,24 @@ export const LoginScreen: React.FC = () => {
 
   // Theme styles
   const styles = {
-    container: {
-      flex: 1,
-      backgroundColor: colorScheme === "dark" ? "#111827" : "#ffffff",
-      paddingHorizontal: 24,
-      paddingVertical: 32,
-    },
     content: {
       flex: 1,
       justifyContent: "center" as const,
+      paddingHorizontal: 24,
+      paddingVertical: 32,
     },
     title: {
       fontSize: 30,
       fontWeight: "bold" as const,
       textAlign: "center" as const,
       marginBottom: 32,
-      color: colorScheme === "dark" ? "#ffffff" : "#1f2937",
+      color: "#ffffff",
     },
     tagline: {
       fontSize: 18,
       textAlign: "center" as const,
       marginBottom: 32,
-      color: colorScheme === "dark" ? "#d1d5db" : "#4b5563",
+      color: "#e5e7eb",
     },
     inputContainer: {
       marginBottom: 16,
@@ -76,7 +74,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScreenBackground variant="gradient" includeSafeArea={false}>
       <View style={styles.content}>
         <Text style={styles.title}>{t("pages.login.appName")}</Text>
 
@@ -120,6 +118,6 @@ export const LoginScreen: React.FC = () => {
           variant="outline"
         />
       </View>
-    </View>
+    </ScreenBackground>
   );
 };

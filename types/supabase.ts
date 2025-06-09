@@ -87,6 +87,41 @@ export interface Database {
           updated_at?: string;
         };
       };
+      conversations: {
+        Row: {
+          id: string;
+          user_id: string;
+          conversation_id: string;
+          title: string;
+          encrypted_data: string;
+          message_count: number;
+          created_at: string;
+          updated_at: string;
+          synced_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          conversation_id: string;
+          title: string;
+          encrypted_data: string;
+          message_count?: number;
+          created_at?: string;
+          updated_at?: string;
+          synced_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          conversation_id?: string;
+          title?: string;
+          encrypted_data?: string;
+          message_count?: number;
+          created_at?: string;
+          updated_at?: string;
+          synced_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;

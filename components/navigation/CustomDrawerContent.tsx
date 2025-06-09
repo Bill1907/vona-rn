@@ -41,11 +41,6 @@ export const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (
       icon: "chatbox" as const,
     },
     {
-      label: t("voice.assistant"),
-      routeName: "voice-assistant",
-      icon: "mic" as const,
-    },
-    {
       label: t("navigation.searchHistory"),
       routeName: "search-history",
       icon: "search" as const,
