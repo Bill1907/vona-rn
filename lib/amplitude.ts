@@ -14,8 +14,16 @@ export const initializeAmplitude = async () => {
   }
 
   try {
+    // Get API key from environment variables
+    const apiKey = process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY;
+
+    if (!apiKey) {
+      console.error("Amplitude API key not found in environment variables");
+      return;
+    }
+
     // Initialize Amplitude first
-    await amplitude.init("fa796f458bf11f1ce4bc2463c633f988").promise;
+    await amplitude.init(apiKey).promise;
 
     // Add Session Replay plugin to Amplitude instance
     await amplitude.add(new SessionReplayPlugin({ sampleRate: 1 })).promise;
