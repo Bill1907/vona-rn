@@ -50,11 +50,6 @@ export const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (
       routeName: "schedule",
       icon: "calendar" as const,
     },
-    {
-      label: t("common.settings"),
-      routeName: "settings",
-      icon: "settings" as const,
-    },
   ];
 
   const styles = {

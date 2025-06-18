@@ -8,15 +8,44 @@
     "scheme": "vona",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "jsc",
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "jsEngine": "hermes",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "음성 어시스턴트를 위해 마이크 접근이 필요합니다.",
+        "NSCameraUsageDescription": "화상 통화를 위해 카메라 접근이 필요합니다."
+      },
+      "bitcode": false,
+      "bundleIdentifier": "com.boseongkim.vona"
     },
     "android": {
+      "jsEngine": "hermes",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH"
+      ],
+      "package": "com.boseongkim.vona"
     },
     "web": {
       "bundler": "metro",
@@ -25,6 +54,13 @@
     },
     "plugins": [
       "expo-router",
+      "@config-plugins/react-native-webrtc",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "마이크 접근 권한이 필요합니다."
+        }
+      ],
       [
         "expo-splash-screen",
         {
