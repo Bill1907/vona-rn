@@ -1,31 +1,28 @@
-import * as amplitude from "@amplitude/analytics-browser";
-import { sessionReplayPlugin } from "@amplitude/plugin-session-replay-browser";
+import * as amplitude from "@amplitude/analytics-react-native";
+import { SessionReplayPlugin } from "@amplitude/plugin-session-replay-react-native";
 
 let isAmplitudeInitialized = false;
 
 /**
- * Initialize Amplitude Analytics with Session Replay
- * This function ensures Amplitude is only initialized once and only on the client-side
+ * Initialize Amplitude Analytics with Session Replay for React Native
+ * This function ensures Amplitude is only initialized once
  */
 export const initializeAmplitude = async () => {
-  // Ensure this only runs client-side (browser environment)
-  if (typeof window === "undefined" || isAmplitudeInitialized) {
+  // Prevent multiple initializations
+  if (isAmplitudeInitialized) {
     return;
   }
 
   try {
-    // Add Session Replay plugin to Amplitude instance
-    amplitude.add(sessionReplayPlugin({ sampleRate: 1 }));
+    // Initialize Amplitude first
+    await amplitude.init("fa796f458bf11f1ce4bc2463c633f988").promise;
 
-    // Initialize Amplitude with the provided API key and configuration
-    amplitude.init("fa796f458bf11f1ce4bc2463c633f988", {
-      fetchRemoteConfig: true,
-      autocapture: true,
-    });
+    // Add Session Replay plugin to Amplitude instance
+    await amplitude.add(new SessionReplayPlugin({ sampleRate: 1 })).promise;
 
     isAmplitudeInitialized = true;
     console.log(
-      "Amplitude Analytics and Session Replay initialized successfully"
+      "Amplitude Analytics and Session Replay initialized successfully for React Native"
     );
   } catch (error) {
     console.error("Failed to initialize Amplitude:", error);

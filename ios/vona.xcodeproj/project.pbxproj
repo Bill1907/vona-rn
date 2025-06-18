@@ -247,11 +247,15 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-vona/Pods-vona-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/AmplitudeCore/AmplitudeCore.framework/AmplitudeCore",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/AmplitudeSessionReplay/AmplitudeSessionReplay.framework/AmplitudeSessionReplay",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/JitsiWebRTC/WebRTC.framework/WebRTC",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AmplitudeCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AmplitudeSessionReplay.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
