@@ -78,7 +78,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           model: requestBody.config.model,
-          instructions: requestBody.config.instructions,
+          instructions: `${requestBody.config.instructions}\n\n당신은 웹 검색 기능을 사용할 수 있습니다. 사용자가 최신 정보나 실시간 정보를 요청하면 web_search 함수를 사용하여 검색하고 결과를 제공해주세요.`,
           voice: requestBody.config.voice,
           input_audio_format: requestBody.config.input_audio_format,
           output_audio_format: requestBody.config.output_audio_format,
@@ -91,6 +91,38 @@ serve(async (req) => {
             prefix_padding_ms: 300,
             silence_duration_ms: 500,
           },
+          tools: [
+            {
+              type: "function",
+              name: "web_search",
+              description:
+                "웹에서 최신 정보를 검색합니다. 실시간 뉴스, 날씨, 주식 가격, 최신 이벤트 등을 찾을 때 사용하세요.",
+              parameters: {
+                type: "object",
+                properties: {
+                  query: {
+                    type: "string",
+                    description: "검색할 쿼리. 한국어 또는 영어로 입력 가능",
+                  },
+                  language: {
+                    type: "string",
+                    enum: ["ko", "en"],
+                    description: "검색 언어 설정",
+                    default: "ko",
+                  },
+                  count: {
+                    type: "number",
+                    description: "검색 결과 개수 (1-10)",
+                    minimum: 1,
+                    maximum: 10,
+                    default: 5,
+                  },
+                },
+                required: ["query"],
+              },
+            },
+          ],
+          tool_choice: "auto",
         }),
       }
     );

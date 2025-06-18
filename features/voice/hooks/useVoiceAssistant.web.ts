@@ -1,3 +1,4 @@
+import { supabase } from "@/api/supabaseClient";
 import {
   RealtimeAgent,
   RealtimeSession,
@@ -28,6 +29,43 @@ export const useVoiceAssistant = (): VoiceAssistantAPI => {
   const [messages, setMessages] = useState<VoiceMessage[]>([]);
   const sessionRef = useRef<RealtimeSession | null>(null);
   const agentRef = useRef<RealtimeAgent | null>(null);
+
+  // 웹 검색 function calling 처리 (현재 웹 SDK에서는 지원되지 않음)
+  const handleWebSearch = useCallback(
+    async (query: string, language: string = "ko", count: number = 5) => {
+      try {
+        const { data, error } = await supabase.functions.invoke("web-search", {
+          body: {
+            query,
+            language,
+            count,
+          },
+        });
+
+        if (error) {
+          console.error("Web search error:", error);
+          return {
+            error: "검색 중 오류가 발생했습니다.",
+            results: [],
+          };
+        }
+
+        return {
+          query: data.query,
+          results: data.results || [],
+          answer: data.answer,
+          total_results: data.total_results || 0,
+        };
+      } catch (error) {
+        console.error("Web search function error:", error);
+        return {
+          error: "검색 서비스를 사용할 수 없습니다.",
+          results: [],
+        };
+      }
+    },
+    []
+  );
 
   /**
    * Voice Assistant 세션을 시작합니다
@@ -156,6 +194,15 @@ export const useVoiceAssistant = (): VoiceAssistantAPI => {
             case "conversation.item.input_audio_transcription.completed":
               // 이미 history_updated에서 처리되므로 중복 방지
               console.log("Audio transcription completed:", event);
+              break;
+
+            // TODO: Function calling 지원이 추가되면 여기서 처리
+            case "response.function_call_arguments.done":
+              console.log(
+                "Function call detected (not yet supported in web):",
+                event
+              );
+              // 웹 검색 기능은 현재 React Native 버전에서만 지원
               break;
 
             default:
