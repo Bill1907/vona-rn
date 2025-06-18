@@ -13,6 +13,8 @@
     "download-fonts": "node ./scripts/download-fonts.js"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.17.10",
+    "@amplitude/plugin-session-replay-browser": "^1.19.0",
     "@config-plugins/react-native-webrtc": "^12.0.0",
     "@expo/vector-icons": "^14.1.0",
     "@openai/agents": "^0.0.4",
