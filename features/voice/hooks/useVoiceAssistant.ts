@@ -1,3 +1,4 @@
+import { supabase } from "@/api/supabaseClient";
 import { Audio } from "expo-av";
 import { useCallback, useRef, useState } from "react";
 import { Platform } from "react-native";
@@ -53,8 +54,6 @@ export const useVoiceAssistant = (): VoiceAssistantAPI => {
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const ephemeralTokenRef = useRef<string | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
-
-  // WebRTC 훅 사용
   const webrtc = useWebrtc({
     onIceCandidate: (candidate) => {
       console.log("ICE candidate:", candidate);
@@ -74,6 +73,43 @@ export const useVoiceAssistant = (): VoiceAssistantAPI => {
       }));
     },
   });
+
+  // 웹 검색 function calling 처리
+  const handleWebSearch = useCallback(
+    async (query: string, language: string = "ko", count: number = 5) => {
+      try {
+        const { data, error } = await supabase.functions.invoke("web-search", {
+          body: {
+            query,
+            language,
+            count,
+          },
+        });
+
+        if (error) {
+          console.error("Web search error:", error);
+          return {
+            error: "검색 중 오류가 발생했습니다.",
+            results: [],
+          };
+        }
+
+        return {
+          query: data.query,
+          results: data.results || [],
+          answer: data.answer,
+          total_results: data.total_results || 0,
+        };
+      } catch (error) {
+        console.error("Web search function error:", error);
+        return {
+          error: "검색 서비스를 사용할 수 없습니다.",
+          results: [],
+        };
+      }
+    },
+    []
+  );
 
   /**
    * 오디오 모드를 스피커폰으로 설정
@@ -463,7 +499,7 @@ export const useVoiceAssistant = (): VoiceAssistantAPI => {
     }
   };
 
-  const handleOpenAIMessage = (message: any) => {
+  const handleOpenAIMessage = async (message: any) => {
     switch (message.type) {
       case "session.created":
         console.log("Session created:", message.session);
@@ -502,6 +538,67 @@ export const useVoiceAssistant = (): VoiceAssistantAPI => {
             timestamp: new Date(),
           };
           setMessages((prev) => [...prev, assistantMessage]);
+        }
+        break;
+
+      case "response.function_call_arguments.done":
+        // Function call이 완료되었을 때 처리
+        console.log("🔧 Function call arguments completed:", message);
+        if (message.name === "web_search" && dataChannelRef.current) {
+          try {
+            const args = JSON.parse(message.arguments);
+            const { query, language = "ko", count = 5 } = args;
+
+            console.log("🔍 Executing web search:", { query, language, count });
+            setState((prev) => ({ ...prev, isSpeaking: true }));
+
+            const searchResult = await handleWebSearch(query, language, count);
+
+            // Function call 결과를 OpenAI에 전송
+            const functionResponse = {
+              type: "conversation.item.create",
+              item: {
+                type: "function_call_output",
+                call_id: message.call_id,
+                output: JSON.stringify(searchResult),
+              },
+            };
+
+            dataChannelRef.current.send(JSON.stringify(functionResponse));
+
+            // 응답 생성 요청
+            const responseCreate = {
+              type: "response.create",
+              response: {
+                modalities: ["text", "audio"],
+              },
+            };
+
+            dataChannelRef.current.send(JSON.stringify(responseCreate));
+
+            console.log(
+              "🔍 Web search completed and sent to OpenAI:",
+              searchResult
+            );
+          } catch (error) {
+            console.error("Function call execution error:", error);
+
+            // 에러 응답 전송
+            if (dataChannelRef.current) {
+              const errorResponse = {
+                type: "conversation.item.create",
+                item: {
+                  type: "function_call_output",
+                  call_id: message.call_id,
+                  output: JSON.stringify({
+                    error: "검색 중 오류가 발생했습니다.",
+                  }),
+                },
+              };
+
+              dataChannelRef.current.send(JSON.stringify(errorResponse));
+            }
+          }
         }
         break;
 
