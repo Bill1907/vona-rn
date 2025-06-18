@@ -2,10 +2,11 @@ import { ScreenBackground } from "@/components/common";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
 import { useTranslation } from "@/hooks/useTranslation";
+import { trackEvent } from "@/lib/amplitude";
 import { useUserStore } from "@/stores/userStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Profile() {
@@ -14,29 +15,78 @@ export default function Profile() {
   const { t } = useTranslation();
   const router = useRouter();
 
+  // Track screen view when component mounts
+  useEffect(() => {
+    trackEvent("Screen View", {
+      screen_name: "Profile",
+      screen_type: "main",
+      timestamp: Date.now(),
+    });
+  }, []);
+
   const handleLogout = async () => {
+    trackEvent("Logout Initiated", {
+      source: "profile_screen",
+      timestamp: Date.now(),
+    });
+
     Alert.alert(t("auth.logout"), t("pages.profile.logoutConfirm"), [
       {
         text: t("common.cancel"),
         style: "cancel",
+        onPress: () => {
+          trackEvent("Logout Cancelled", {
+            source: "profile_screen",
+            timestamp: Date.now(),
+          });
+        },
       },
       {
         text: t("auth.logout"),
         style: "destructive",
         onPress: async () => {
-          await AuthService.signOut();
-          setUser(null);
-          router.replace("/(auth)/login" as any);
+          const logoutStartTime = Date.now();
+
+          try {
+            await AuthService.signOut();
+
+            trackEvent("User Logout", {
+              source: "profile_screen",
+              logout_duration: Date.now() - logoutStartTime,
+              timestamp: Date.now(),
+            });
+
+            setUser(null);
+            router.replace("/(auth)/login" as any);
+          } catch (error) {
+            trackEvent("Logout Failed", {
+              error: error instanceof Error ? error.message : "Unknown error",
+              logout_duration: Date.now() - logoutStartTime,
+              timestamp: Date.now(),
+            });
+          }
         },
       },
     ]);
   };
 
   const handleAccountSettings = () => {
+    trackEvent("Navigation", {
+      from: "profile",
+      to: "account_settings",
+      action: "button_click",
+      timestamp: Date.now(),
+    });
     router.push("/account-settings" as any);
   };
 
   const handleAppSettings = () => {
+    trackEvent("Navigation", {
+      from: "profile",
+      to: "app_settings",
+      action: "button_click",
+      timestamp: Date.now(),
+    });
     router.push("/app-settings" as any);
   };
 

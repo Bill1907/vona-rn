@@ -2,6 +2,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { AuthService } from "@/features/auth/services";
 import { useFonts } from "@/hooks/useFonts";
+import { initializeAmplitude } from "@/lib/amplitude";
 import initI18n from "@/lib/i18n";
 import { useUserStore } from "@/stores/userStore";
 import { Slot, useRouter } from "expo-router";
@@ -35,6 +36,12 @@ export default function RootLayout() {
     };
 
     initializeI18n();
+  }, []);
+
+  useEffect(() => {
+    // Initialize Amplitude Analytics and Session Replay
+    // This will only run client-side due to the check in initializeAmplitude
+    initializeAmplitude();
   }, []);
 
   useEffect(() => {
