@@ -4,10 +4,7 @@ import {
   SmartText,
 } from "@/components/common";
 import { useTheme } from "@/contexts/ThemeContext";
-import {
-  testSupabaseFunctions,
-  useConversationTitle,
-} from "@/features/conversation";
+import { useConversationTitle } from "@/features/conversation";
 import {
   ConversationDetail,
   ConversationHistory,
@@ -31,15 +28,6 @@ export default function Main() {
   const { colorScheme } = useTheme();
   const { t } = useTranslation();
   const { generateTitle, isGenerating } = useConversationTitle();
-
-  // 디버깅을 위한 함수 테스트
-  useEffect(() => {
-    const testConnection = async () => {
-      const isConnected = await testSupabaseFunctions();
-      console.log("Supabase Functions connection test:", isConnected);
-    };
-    testConnection();
-  }, []);
 
   // 대화 저장 관련 상태
   const [showConversationHistory, setShowConversationHistory] = useState(false);
