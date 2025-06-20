@@ -13,16 +13,9 @@ export interface SearchResult {
   created_at: string;
 }
 
-export interface Schedule {
-  id: string;
-  title: string;
-  description?: string;
-  start_time: string;
-  end_time: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Database } from "./supabase";
+
+export type Schedule = Database["public"]["Tables"]["calendar_events"]["Row"];
 
 export interface ApiResponse<T> {
   data?: T;

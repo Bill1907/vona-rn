@@ -2,7 +2,6 @@
   "navigation": {
     "home": "홈",
     "conversations": "대화 기록",
-    "searchHistory": "검색 기록",
     "schedule": "일정",
     "profile": "프로필"
   },
@@ -32,6 +31,57 @@
     "ok": "확인",
     "yesterday": "어제",
     "daysAgo": "일 전"
+  },
+  "calendar": {
+    "weekDays": {
+      "sunday": "일",
+      "monday": "월",
+      "tuesday": "화",
+      "wednesday": "수",
+      "thursday": "목",
+      "friday": "금",
+      "saturday": "토"
+    },
+    "weekDaysShort": {
+      "sunday": "일",
+      "monday": "월",
+      "tuesday": "화",
+      "wednesday": "수",
+      "thursday": "목",
+      "friday": "금",
+      "saturday": "토"
+    },
+    "months": {
+      "january": "1월",
+      "february": "2월",
+      "march": "3월",
+      "april": "4월",
+      "may": "5월",
+      "june": "6월",
+      "july": "7월",
+      "august": "8월",
+      "september": "9월",
+      "october": "10월",
+      "november": "11월",
+      "december": "12월"
+    },
+    "monthsLong": {
+      "january": "1월",
+      "february": "2월",
+      "march": "3월",
+      "april": "4월",
+      "may": "5월",
+      "june": "6월",
+      "july": "7월",
+      "august": "8월",
+      "september": "9월",
+      "october": "10월",
+      "november": "11월",
+      "december": "12월"
+    },
+    "year": "년",
+    "today": "오늘",
+    "events": "일정"
   },
   "voice": {
     "assistant": "음성 어시스턴트",
@@ -94,13 +144,52 @@
       "title": "대화 기록",
       "subtitle": "AI와의 대화 기록이 여기에 표시됩니다.\n아직 대화 기록이 없습니다."
     },
-    "searchHistory": {
-      "title": "검색 기록",
-      "subtitle": "웹 검색 기록이 여기에 표시됩니다.\n아직 검색 기록이 없습니다."
-    },
     "schedule": {
       "title": "일정",
-      "subtitle": "일정 관리 기능이 여기에 구현됩니다"
+      "subtitle": "일정 관리 기능이 여기에 구현됩니다",
+      "addSchedule": "일정 추가",
+      "editSchedule": "일정 수정",
+      "deleteSchedule": "일정 삭제",
+      "scheduleTitle": "일정 제목",
+      "scheduleDescription": "일정 설명",
+      "startTime": "시작 시간",
+      "endTime": "종료 시간",
+      "allDay": "종일",
+      "date": "날짜",
+      "time": "시간",
+      "today": "오늘",
+      "tomorrow": "내일",
+      "noSchedules": "일정이 없습니다",
+      "noSchedulesToday": "오늘 일정이 없습니다",
+      "upcomingSchedules": "다가오는 일정",
+      "pastSchedules": "지난 일정",
+      "thisWeek": "이번 주",
+      "thisMonth": "이번 달",
+      "monthView": "월 보기",
+      "weekView": "주 보기",
+      "dayView": "일 보기",
+      "agendaView": "일정 목록",
+      "createSuccess": "일정이 생성되었습니다",
+      "updateSuccess": "일정이 수정되었습니다",
+      "deleteSuccess": "일정이 삭제되었습니다",
+      "createFailed": "일정 생성에 실패했습니다",
+      "updateFailed": "일정 수정에 실패했습니다",
+      "deleteFailed": "일정 삭제에 실패했습니다",
+      "deleteConfirm": "이 일정을 삭제하시겠습니까?",
+      "titleRequired": "일정 제목을 입력해주세요",
+      "invalidTimeRange": "종료 시간은 시작 시간보다 늦어야 합니다",
+      "timeConflict": "이미 해당 시간에 다른 일정이 있습니다",
+      "duration": "소요 시간",
+      "minutes": "분",
+      "hours": "시간",
+      "searchSchedules": "일정 검색",
+      "filterByDate": "날짜별 필터",
+      "sortBy": "정렬",
+      "sortByTime": "시간순",
+      "sortByTitle": "제목순",
+      "sortByCreated": "생성순",
+      "ascending": "오름차순",
+      "descending": "내림차순"
     },
     "search": {
       "title": "검색",

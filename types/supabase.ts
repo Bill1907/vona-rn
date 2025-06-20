@@ -55,7 +55,7 @@ export interface Database {
           created_at?: string;
         };
       };
-      schedules: {
+      calendar_events: {
         Row: {
           id: string;
           title: string;

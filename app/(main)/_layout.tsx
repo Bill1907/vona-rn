@@ -67,17 +67,6 @@ export default function MainLayout() {
           }}
         />
         <Drawer.Screen
-          name="search-history"
-          options={{
-            title: t("navigation.searchHistory"),
-            headerTitle: t("navigation.searchHistory"),
-            drawerLabel: t("navigation.searchHistory"),
-            drawerIcon: ({ color, size }) => (
-              <Ionicons name="search" size={size} color={color} />
-            ),
-          }}
-        />
-        <Drawer.Screen
           name="schedule"
           options={{
             title: t("navigation.schedule"),

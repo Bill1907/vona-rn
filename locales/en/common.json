@@ -2,7 +2,6 @@
   "navigation": {
     "home": "Home",
     "conversations": "Conversations",
-    "searchHistory": "Search History",
     "schedule": "Schedule",
     "profile": "Profile"
   },
@@ -32,6 +31,57 @@
     "ok": "OK",
     "yesterday": "Yesterday",
     "daysAgo": " days ago"
+  },
+  "calendar": {
+    "weekDays": {
+      "sunday": "Sun",
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat"
+    },
+    "weekDaysShort": {
+      "sunday": "S",
+      "monday": "M",
+      "tuesday": "T",
+      "wednesday": "W",
+      "thursday": "T",
+      "friday": "F",
+      "saturday": "S"
+    },
+    "months": {
+      "january": "Jan",
+      "february": "Feb",
+      "march": "Mar",
+      "april": "Apr",
+      "may": "May",
+      "june": "Jun",
+      "july": "Jul",
+      "august": "Aug",
+      "september": "Sep",
+      "october": "Oct",
+      "november": "Nov",
+      "december": "Dec"
+    },
+    "monthsLong": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "year": "",
+    "today": "Today",
+    "events": "Events"
   },
   "voice": {
     "assistant": "Voice Assistant",
@@ -94,13 +144,52 @@
       "title": "Conversations",
       "subtitle": "Your AI conversation history will be displayed here.\nNo conversation history yet."
     },
-    "searchHistory": {
-      "title": "Search History",
-      "subtitle": "Your web search history will be displayed here.\nNo search history yet."
-    },
     "schedule": {
       "title": "Schedule",
-      "subtitle": "Schedule management features will be implemented here"
+      "subtitle": "Schedule management features will be implemented here",
+      "addSchedule": "Add Schedule",
+      "editSchedule": "Edit Schedule",
+      "deleteSchedule": "Delete Schedule",
+      "scheduleTitle": "Schedule Title",
+      "scheduleDescription": "Schedule Description",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "allDay": "All Day",
+      "date": "Date",
+      "time": "Time",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "noSchedules": "No schedules",
+      "noSchedulesToday": "No schedules today",
+      "upcomingSchedules": "Upcoming Schedules",
+      "pastSchedules": "Past Schedules",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "monthView": "Month View",
+      "weekView": "Week View",
+      "dayView": "Day View",
+      "agendaView": "Agenda View",
+      "createSuccess": "Schedule created successfully",
+      "updateSuccess": "Schedule updated successfully",
+      "deleteSuccess": "Schedule deleted successfully",
+      "createFailed": "Failed to create schedule",
+      "updateFailed": "Failed to update schedule",
+      "deleteFailed": "Failed to delete schedule",
+      "deleteConfirm": "Are you sure you want to delete this schedule?",
+      "titleRequired": "Please enter a schedule title",
+      "invalidTimeRange": "End time must be later than start time",
+      "timeConflict": "There is already another schedule at this time",
+      "duration": "Duration",
+      "minutes": "minutes",
+      "hours": "hours",
+      "searchSchedules": "Search Schedules",
+      "filterByDate": "Filter by Date",
+      "sortBy": "Sort By",
+      "sortByTime": "By Time",
+      "sortByTitle": "By Title",
+      "sortByCreated": "By Created",
+      "ascending": "Ascending",
+      "descending": "Descending"
     },
     "search": {
       "title": "Search",
